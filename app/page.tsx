@@ -1,5 +1,8 @@
 "use client";
 import { ChangeEvent, useDeferredValue, useState } from "react";
+import { toast } from "sonner";
+import { ActivityCard } from "./components/activity-card";
+import { NewActivityCard } from "./components/new-activity-card";
 
 interface Activity {
   id: string;
@@ -8,11 +11,11 @@ interface Activity {
 }
 export default function Home() {
   const [search, setSearch] = useState("");
-  const [activity, setActivity] = useState<Activity[]>(() => {
-    const activityOnStorage = localStorage.getItem("activity");
+  const [activities, setActivities] = useState<Activity[]>(() => {
+    const activitiesOnStorage = localStorage.getItem("activities");
 
-    if (activityOnStorage) {
-      return JSON.parse(activityOnStorage);
+    if (activitiesOnStorage) {
+      return JSON.parse(activitiesOnStorage);
     }
     return [];
   });
@@ -24,11 +27,22 @@ export default function Home() {
       content,
     };
 
-    const activityArray = [newActivity, ...activity];
+    const activityArray = [newActivity, ...activities];
 
-    setActivity(activityArray);
+    setActivities(activityArray);
 
-    localStorage.setItem("activity", JSON.stringify(activityArray));
+    localStorage.setItem("activities", JSON.stringify(activityArray));
+  }
+
+  function onActivityDeleted(id: string) {
+    const activitiesArray = activities.filter((activity) => {
+      return activity.id !== id;
+    });
+
+    setActivities(activitiesArray);
+
+    localStorage.setItem("activities", JSON.stringify(activitiesArray));
+    toast.success("Atividade Apagada");
   }
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
@@ -39,18 +53,37 @@ export default function Home() {
 
   const filteredActivities =
     useDeferredValue(search) !== ""
-      ? activity.filter((activity) =>
+      ? activities.filter((activity) =>
           activity.content
             .toLocaleLowerCase()
             .includes(search.toLocaleLowerCase())
         )
-      : activity;
+      : activities;
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        Hello Projeto 5
-      </main>
+    <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
+      <form className="w-full">
+        <input
+          type="text"
+          placeholder="Busque por uma atividade..."
+          className="w-full bg-transparent text-3xl font-semibold tracking-tight placeholder:text-slate-500 outline-none"
+          onChange={handleSearch}
+        />
+      </form>
+      <div className="h-px bg-slate-700" />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
+        <NewActivityCard onActivityCreated={onActivityCreated} />
+        {filteredActivities.map((activity) => {
+          return (
+            <ActivityCard
+              key={activity.id}
+              activity={activity}
+              onActivityDelete={onActivityDeleted}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

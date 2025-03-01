@@ -48,11 +48,11 @@ export function ActivityCard({
           </div>
           <button
             type="button"
-            className="group w-full bg-slate-800 hover:bg-red-100/80 hover:cursor-pointer hover:text-black py-4 text-center text-sm text-slate-300 outline-none font-medium"
+            className="group w-full bg-red-500 hover:bg-red-100/80 hover:cursor-pointer hover:text-black py-4 text-center text-sm text-slate-300 outline-none font-medium"
             onClick={() => onActivityDelete(activity.id)}
           >
             Deseja{" "}
-            <span className="text-red-400 group-hover:text-red-700 group-hover:underline">
+            <span className="text-black group-hover:text-red-700 group-hover:underline">
               apagar essa atividade
             </span>
             ?

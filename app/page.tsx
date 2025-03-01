@@ -81,7 +81,7 @@ export default function Home() {
   const filteredActivities =
     useDeferredValue(search) !== ""
       ? activities.filter((activity) =>
-          activity.activity
+          activity.description
             .toLocaleLowerCase()
             .includes(search.toLocaleLowerCase())
         )
@@ -92,7 +92,7 @@ export default function Home() {
       <form className="w-full">
         <input
           type="text"
-          placeholder="Busque por uma atividade..."
+          placeholder="Busque por uma atividade pela descrição..."
           className="w-full bg-transparent text-3xl font-semibold tracking-tight placeholder:text-slate-500 outline-none"
           onChange={handleSearch}
         />

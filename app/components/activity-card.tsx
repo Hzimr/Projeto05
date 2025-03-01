@@ -78,7 +78,7 @@ export function ActivityCard({
           {isEditing ? (
             <div className="flex flex-1 flex-col gap-3 p-5">
               <span className="text-sm font-medium text-slate-300">
-                Editar Atividade
+                Editar atividade
               </span>
               <input
                 type="text"
@@ -108,7 +108,7 @@ export function ActivityCard({
               />
               <button
                 onClick={handleEditSubmit}
-                className="bg-sigaa1 py-2 px-4 text-white font-medium rounded-md hover:bg-sigaa1/90"
+                className="bg-sigaa2 py-2 px-4 text-white font-medium rounded-md hover:bg-sigaa1/90"
               >
                 Salvar Edição
               </button>

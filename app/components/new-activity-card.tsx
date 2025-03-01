@@ -3,29 +3,87 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { IoClose } from "react-icons/io5";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+// Validação com Zod
+const activitySchema = z.object({
+  activity: z.string().min(1, "Atividade é obrigatória."),
+  responsible: z.string().min(1, "Responsável é obrigatório."),
+  date: z.string().min(1, "Data é obrigatória."),
+  description: z.string().min(1, "Descrição é obrigatória."),
+});
 
 interface NewActivityCardProps {
-  onActivityCreated: (content: string) => void;
+  onActivityCreated: (
+    activity: string,
+    responsible: string,
+    date: string,
+    description: string
+  ) => void;
 }
 
 export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
-  const [content, setContent] = useState("");
+  const [activity, setActivity] = useState("");
+  const [responsible, setResponsible] = useState("");
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
 
-  function handleContentChanged(event: ChangeEvent<HTMLTextAreaElement>) {
-    setContent(event.target.value);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  function handleInputChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = event.target;
+
+    switch (name) {
+      case "activity":
+        setActivity(value);
+        break;
+      case "responsible":
+        setResponsible(value);
+        break;
+      case "date":
+        setDate(value);
+        break;
+      case "description":
+        setDescription(value);
+        break;
+      default:
+        break;
+    }
   }
 
   function handleSaveActivity(event: FormEvent) {
     event.preventDefault();
 
-    if (content !== "") {
-      onActivityCreated(content);
+    const result = activitySchema.safeParse({
+      activity,
+      responsible,
+      date,
+      description,
+    });
 
-      setContent("");
-      toast.success("Atividade criada com sucesso!");
-    } else {
-      toast.error("Atividade vazia, por favor preencha o campo");
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        if (error.path[0]) {
+          fieldErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast.error("Por favor, corrija os erros.");
+      return;
     }
+
+    setErrors({});
+
+    onActivityCreated(activity, responsible, date, description);
+
+    setActivity("");
+    setResponsible("");
+    setDate("");
+    setDescription("");
+    toast.success("Atividade criada com sucesso!");
   }
 
   return (
@@ -43,26 +101,87 @@ export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
           <Dialog.Close className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
             <IoClose className="size-5" />
           </Dialog.Close>
-          <form className="flex flex-1 flex-col">
-            <div className="flex flex-1 flex-col gap-3 p-5 ">
-              <span className="mt-3 text-sm font-medium text-slate-300">
-                Adicionar atividade
-              </span>
-              <>
-                <textarea
-                  autoFocus
-                  className="text-sm leading-6 text-slate-400 bg-transparent    resize-none flex-1 outline-none"
-                  onChange={handleContentChanged}
-                  value={content}
-                />
-              </>
+          <form
+            className="flex flex-1 flex-col p-5"
+            onSubmit={handleSaveActivity}
+          >
+            {/* Campo Atividade */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300">
+                Atividade
+              </label>
+              <input
+                name="activity"
+                type="text"
+                className="w-full text-sm text-slate-400 bg-transparent outline-none border-b border-slate-500"
+                value={activity}
+                onChange={handleInputChange}
+              />
+              {errors.activity && (
+                <span className="text-xs text-red-500">{errors.activity}</span>
+              )}
             </div>
+
+            {/* Campo Responsável */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300">
+                Responsável
+              </label>
+              <input
+                name="responsible"
+                type="text"
+                className="w-full text-sm text-slate-400 bg-transparent outline-none border-b border-slate-500"
+                value={responsible}
+                onChange={handleInputChange}
+              />
+              {errors.responsible && (
+                <span className="text-xs text-red-500">
+                  {errors.responsible}
+                </span>
+              )}
+            </div>
+
+            {/* Campo Data */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300">
+                Data
+              </label>
+              <input
+                name="date"
+                type="date"
+                className="w-full text-sm text-slate-400 bg-transparent outline-none border-b border-slate-500"
+                value={date}
+                onChange={handleInputChange}
+              />
+              {errors.date && (
+                <span className="text-xs text-red-500">{errors.date}</span>
+              )}
+            </div>
+
+            {/* Campo Descrição */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300">
+                Descrição
+              </label>
+              <textarea
+                name="description"
+                className="w-full text-sm text-slate-400 bg-transparent outline-none border-b border-slate-500"
+                value={description}
+                onChange={handleInputChange}
+              />
+              {errors.description && (
+                <span className="text-xs text-red-500">
+                  {errors.description}
+                </span>
+              )}
+            </div>
+
+            {/* Botão de salvar */}
             <button
-              type="button"
-              className="w-full bg-sigaa1 py-4 text-center text-sm text-sigaab outline-none font-medium hover:bg-emerald-100 hover:cursor-pointer"
-              onClick={handleSaveActivity}
+              type="submit"
+              className="mt-auto bg-sigaa3 text-slate-300 py-2 px-4 rounded-md hover:bg-sigaa2 hover:text-white focus-visible:ring focus-visible:ring-sigaa4 outline-none"
             >
-              Salvar atividade
+              Salvar
             </button>
           </form>
         </Dialog.Content>

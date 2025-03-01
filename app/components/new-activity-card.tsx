@@ -1,6 +1,6 @@
 "use client";
 import * as Dialog from "@radix-ui/react-dialog";
-import { IoChevronBackCircle, IoClose } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 
@@ -9,28 +9,10 @@ interface NewActivityCardProps {
 }
 
 export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
-  const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true);
   const [content, setContent] = useState("");
-
-  function handleStartEditor() {
-    setShouldShowOnboarding(false);
-  }
 
   function handleContentChanged(event: ChangeEvent<HTMLTextAreaElement>) {
     setContent(event.target.value);
-
-    if (event.target.value === "") {
-      setShouldShowOnboarding(true);
-    }
-  }
-
-  function handleContentChangedWithClick() {
-    if (content === "") {
-      setShouldShowOnboarding(true);
-    } else {
-      toast.info("Há conteúdo dentro das atividades");
-      return;
-    }
   }
 
   function handleSaveActivity(event: FormEvent) {
@@ -40,8 +22,6 @@ export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
       onActivityCreated(content);
 
       setContent("");
-      setShouldShowOnboarding(true);
-
       toast.success("Atividade criada com sucesso!");
     } else {
       toast.error("Atividade vazia, por favor preencha o campo");
@@ -50,7 +30,7 @@ export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="flex flex-col text-left rounded-md bg-sigaa3 p-5 gap-3 overflow-hidden hover:ring-2 hover:ring-slate-300 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none">
+      <Dialog.Trigger className="flex flex-col text-left rounded-md bg-sigaa3 p-5 gap-3 overflow-hidden hover:ring-2 hover:ring-black focus-visible:ring-2 focus-visible:ring-sigaab outline-none">
         <span className="text-sm font-medium text-slate-200">
           Adicionar atividade
         </span>
@@ -68,38 +48,18 @@ export function NewActivityCard({ onActivityCreated }: NewActivityCardProps) {
               <span className="mt-3 text-sm font-medium text-slate-300">
                 Adicionar atividade
               </span>
-              {shouldShowOnboarding ? (
-                <p className="text-sm leading-6 text-slate-400">
-                  <button
-                    className="font-medium text-lime-400 hover:underline"
-                    onClick={handleStartEditor}
-                    type="button"
-                  >
-                    utilize apenas texto.
-                  </button>
-                </p>
-              ) : (
-                <>
-                  <button
-                    className="text-white flex gap-1 items-center px-1 absolute left-0 top-0"
-                    onClick={() => handleContentChangedWithClick()}
-                    type="button"
-                  >
-                    <IoChevronBackCircle className="size-5" />
-                    Voltar
-                  </button>
-                  <textarea
-                    autoFocus
-                    className="text-sm leading-6 text-slate-400 bg-transparent    resize-none flex-1 outline-none"
-                    onChange={handleContentChanged}
-                    value={content}
-                  />
-                </>
-              )}
+              <>
+                <textarea
+                  autoFocus
+                  className="text-sm leading-6 text-slate-400 bg-transparent    resize-none flex-1 outline-none"
+                  onChange={handleContentChanged}
+                  value={content}
+                />
+              </>
             </div>
             <button
               type="button"
-              className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950      outline-none font-medium hover:bg-lime-500"
+              className="w-full bg-sigaa1 py-4 text-center text-sm text-sigaab outline-none font-medium hover:bg-emerald-100 hover:cursor-pointer"
               onClick={handleSaveActivity}
             >
               Salvar atividade

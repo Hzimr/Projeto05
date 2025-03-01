@@ -19,7 +19,7 @@ export function ActivityCard({
 }: ActivityCardProps) {
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="flex flex-col text-left rounded-md bg-sigaa2 p-5 gap-3 overflow-hidden relative hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none ">
+      <Dialog.Trigger className="flex flex-col text-left rounded-md bg-sigaa2 p-5 gap-3 overflow-hidden relative hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-sigaab outline-none ">
         <span className="text-sm font-medium text-black">
           {formatDistanceToNow(activity.date, {
             locale: ptBR,
@@ -48,11 +48,11 @@ export function ActivityCard({
           </div>
           <button
             type="button"
-            className="group w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium"
+            className="group w-full bg-slate-800 hover:bg-red-100/80 hover:cursor-pointer hover:text-black py-4 text-center text-sm text-slate-300 outline-none font-medium"
             onClick={() => onActivityDelete(activity.id)}
           >
             Deseja{" "}
-            <span className="text-red-400 group-hover:underline">
+            <span className="text-red-400 group-hover:text-red-700 group-hover:underline">
               apagar essa atividade
             </span>
             ?
